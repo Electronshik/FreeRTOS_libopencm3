@@ -4,5 +4,6 @@
 *.hex
 *.a
 *.elf
+generated.*.ld
 
-Build/
+build/
