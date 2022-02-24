@@ -8,6 +8,8 @@
 #include <libopencm3/stm32/gpio.h>
 //#include <libopencm3/stm32/f4/usart.h>
 
+#include "main.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
@@ -356,7 +358,7 @@ static void prvButtonTestTask(void *pvParameters)
 	{
 		usbd_poll(usbd_dev);
 		button_poll(usbd_dev);
-		vTaskDelay(3);
+		vTaskDelay(1);
 	}
 }
 
@@ -385,10 +387,33 @@ int main(void)
 
 	usbd_register_set_config_callback(usbd_dev, usbmidi_set_config);
 
-	xTaskCreate( prvButtonTestTask, "BtnTest", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
+	xTaskCreate( prvButtonTestTask, "BtnTest", 16 * configMINIMAL_STACK_SIZE, ( void * ) NULL, 3 + tskIDLE_PRIORITY, NULL );
+
+	vTaskStartScheduler();
 
 	while (1) {
 		usbd_poll(usbd_dev);
 		button_poll(usbd_dev);
 	}
+}
+
+
+void vApplicationIdleHook(void)
+{
+}
+
+void vApplicationMallocFailedHook(void)
+{
+    for(;;);
+}
+
+void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
+{
+    (void)pcTaskName;
+    (void)pxTask;
+    for(;;);
+}
+
+void vApplicationTickHook(void)
+{
 }

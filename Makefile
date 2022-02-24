@@ -9,6 +9,7 @@ INCLUDES_DIR += ./libopencm3/stm32
 CFILES = main.c
 CFILES += $(shell find ./FreeRTOS-Kernel/*.c)
 CFILES += $(shell find ./FreeRTOS-Kernel/portable/GCC/ARM_CM4F/*.c)
+CFILES += ./FreeRTOS-Kernel/portable/MemMang/heap_4.c
 #AFILES += api-asm.S
 
 $(info $(CFILES))
