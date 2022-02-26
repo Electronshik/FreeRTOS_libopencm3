@@ -1,4 +1,4 @@
-## FreeRTOS + libopencm3 template makefile project
+## FreeRTOS + libopencm3 template makefile project for stm32, stm32f4, stm32f1 and other hardware
 
 rules.mk and Makefile example are taken from this repo:
 
