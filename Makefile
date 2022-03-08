@@ -3,7 +3,6 @@ BUILD_DIR = build
 
 INCLUDES_DIR = ./
 INCLUDES_DIR += ./FreeRTOS-Kernel/include
-INCLUDES_DIR += ./FreeRTOS-Kernel/portable/GCC/ARM_CM4F
 INCLUDES_DIR += ./libopencm3/stm32
 
 CFILES = main.c
@@ -16,8 +15,6 @@ DEVICE = stm32f429zi
 #DEVICE = stm32f103c8t6
 OOCD_FILE = board/stm32f4discovery.cfg
 
-VPATH += $(INCLUDES_DIR)
-INCLUDES += $(patsubst %,-I%, . $(INCLUDES_DIR))
 OPENCM3_DIR = ./libopencm3
 
 rtos_mcu_family		:=$(shell $(OPENCM3_DIR)/scripts/genlink.py $(OPENCM3_DIR)/ld/devices.data $(DEVICE) FAMILY)
@@ -35,24 +32,32 @@ $(info rtos_mcu_cppflags: $(rtos_mcu_cppflags))
 ifeq ($(rtos_mcu_cpu), cortex-m3)
 	ifeq ($(rtos_mcu_fpu), soft)
 		CFILES += $(shell find ./FreeRTOS-Kernel/portable/GCC/ARM_CM3_MPU/*.c)
+		INCLUDES_DIR += ./FreeRTOS-Kernel/portable/GCC/ARM_CM3_MPU
 	else
 		CFILES += $(shell find ./FreeRTOS-Kernel/portable/GCC/ARM_CM3/*.c)
+		INCLUDES_DIR += ./FreeRTOS-Kernel/portable/GCC/ARM_CM3
 	endif
 endif
 
 ifeq ($(rtos_mcu_cpu), cortex-m4)
 	ifeq ($(rtos_mcu_fpu), soft)
 		CFILES += $(shell find ./FreeRTOS-Kernel/portable/GCC/ARM_CM4_MPU/*.c)
+		INCLUDES_DIR += ./FreeRTOS-Kernel/portable/GCC/ARM_CM4_MPU
 	else
 		CFILES += $(shell find ./FreeRTOS-Kernel/portable/GCC/ARM_CM4F/*.c)
+		INCLUDES_DIR += ./FreeRTOS-Kernel/portable/GCC/ARM_CM4F
 	endif
 endif
 
 ifeq ($(rtos_mcu_cpu), cortex-m7)
 	CFILES += $(shell find ./FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1/*.c)
+	INCLUDES_DIR += ./FreeRTOS-Kernel/portable/GCC/ARM_CM7/r0p1
 endif
 
 $(info $(CFILES))
+
+VPATH += $(INCLUDES_DIR)
+INCLUDES += $(patsubst %,-I%, . $(INCLUDES_DIR))
 
 include $(OPENCM3_DIR)/mk/genlink-config.mk
 include ./rules.mk
